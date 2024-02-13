@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Ownable} from "lib/dn404/src/example/SimpleDN404.sol";
+import {Ownable2Step, Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol";
 import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 
-contract ShoeDescriptor is Ownable {
+contract ShoeDescriptor is Ownable2Step {
     string private _baseURI;
 
     event BaseURIChanged(string baseURI);
 
-    constructor() {
-        _initializeOwner(msg.sender);
-    }
+    constructor() Ownable(msg.sender) {}
 
     function setBaseURI(string calldata baseURI_) public onlyOwner {
         _baseURI = baseURI_;

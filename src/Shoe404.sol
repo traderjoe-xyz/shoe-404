@@ -3,11 +3,11 @@ pragma solidity ^0.8.13;
 
 import {DN404} from "lib/dn404/src/DN404.sol";
 import {DN404Mirror} from "lib/dn404/src/DN404Mirror.sol";
-import {Ownable} from "lib/dn404/src/example/SimpleDN404.sol";
+import {Ownable2Step, Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol";
 
 import {IDescriptor} from "./interfaces/IDescriptor.sol";
 
-contract Shoe404 is DN404, Ownable {
+contract Shoe404 is DN404, Ownable2Step {
     string private _name;
     string private _symbol;
     IDescriptor private _descriptor;
@@ -16,9 +16,9 @@ contract Shoe404 is DN404, Ownable {
 
     event Withdrawn(uint256 amount);
 
-    constructor(string memory name_, string memory symbol_, uint96 initialTokenSupply, address initialSupplyOwner) {
-        _initializeOwner(msg.sender);
-
+    constructor(string memory name_, string memory symbol_, uint96 initialTokenSupply, address initialSupplyOwner)
+        Ownable(msg.sender)
+    {
         _name = name_;
         _symbol = symbol_;
 
