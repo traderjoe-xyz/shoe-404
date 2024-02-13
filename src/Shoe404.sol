@@ -56,10 +56,6 @@ contract Shoe404 is DN404, Ownable {
         result = _descriptor.tokenURI(tokenId);
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
-    }
-
     function withdraw() public onlyOwner {
         uint256 balance = address(this).balance;
         (bool success,) = payable(msg.sender).call{value: balance}("");
