@@ -10,26 +10,33 @@ contract ShoeAirdrop is Script {
     function run() public {
         Shoe404 shoe = new Shoe404("Shoe404", "SHOE", 10_000e18, address(this));
 
-        uint256 gasUsed;
+        address[] memory recipients = new address[](1000);
+        uint256[] memory amounts = new uint256[](1000);
 
         for (uint256 i = 0; i < 1000; i++) {
-            address recipient = address(uint160(uint256(keccak256(abi.encodePacked(i)))));
-
-            uint256 gasBefore = gasleft();
-            shoe.transfer(recipient, 1);
-            gasUsed += gasBefore - gasleft();
+            recipients[i] = address(uint160(uint256(keccak256(abi.encodePacked(i)))));
+            amounts[i] = 1;
         }
+
+        uint256 gasBefore = gasleft();
+        shoe.airdrop(recipients, amounts);
+        uint256 gasUsed = gasBefore - gasleft();
 
         console.log("Gas used for transfers: %e", gasUsed * 25e9);
 
         gasUsed = 0;
 
         for (uint256 i = 0; i < 1000; i++) {
-            address recipient = address(uint160(uint256(keccak256(abi.encodePacked(i + 1e18)))));
+            recipients[i] = address(uint160(uint256(keccak256(abi.encodePacked(type(uint256).max - i)))));
+            amounts[i] = 1e18;
+        }
 
-            uint256 gasBefore = gasleft();
-            shoe.transfer(recipient, 1e18);
-            gasUsed += gasBefore - gasleft();
+        gasBefore = gasleft();
+        shoe.airdrop(recipients, amounts);
+        gasUsed = gasBefore - gasleft();
+
+        if (gasUsed > 14e6) {
+            console.log("Gas used higher than block size limit !");
         }
 
         console.log("Gas used for mints: %e", gasUsed * 25e9);

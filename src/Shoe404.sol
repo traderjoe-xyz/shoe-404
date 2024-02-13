@@ -26,6 +26,14 @@ contract Shoe404 is DN404, Ownable {
         _initializeDN404(initialTokenSupply, initialSupplyOwner, mirror);
     }
 
+    function airdrop(address[] calldata recipients, uint256[] calldata amounts) public onlyOwner {
+        require(recipients.length == amounts.length, "Shoe404: invalid input");
+
+        for (uint256 i = 0; i < recipients.length; i++) {
+            _transfer(msg.sender, recipients[i], amounts[i]);
+        }
+    }
+
     function name() public view override returns (string memory) {
         return _name;
     }
