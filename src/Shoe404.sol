@@ -4,12 +4,13 @@ pragma solidity ^0.8.13;
 import {DN404} from "lib/dn404/src/DN404.sol";
 import {DN404Mirror} from "lib/dn404/src/DN404Mirror.sol";
 import {Ownable} from "lib/dn404/src/example/SimpleDN404.sol";
-import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
+
+import {IDescriptor} from "./interfaces/IDescriptor.sol";
 
 contract Shoe404 is DN404, Ownable {
     string private _name;
     string private _symbol;
-    string private _baseURI;
+    IDescriptor private _descriptor;
 
     constructor(string memory name_, string memory symbol_, uint96 initialTokenSupply, address initialSupplyOwner) {
         _initializeOwner(msg.sender);
@@ -29,18 +30,20 @@ contract Shoe404 is DN404, Ownable {
         return _symbol;
     }
 
+    function setDescriptor(IDescriptor descriptor) public onlyOwner {
+        _descriptor = descriptor;
+    }
+
+    function getDescriptor() public view returns (IDescriptor) {
+        return _descriptor;
+    }
+
     function tokenURI(uint256 tokenId) public view override returns (string memory result) {
-        if (bytes(_baseURI).length != 0) {
-            result = string(abi.encodePacked(_baseURI, Strings.toString(tokenId)));
-        }
+        result = _descriptor.tokenURI(tokenId);
     }
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
-    }
-
-    function setBaseURI(string calldata baseURI_) public onlyOwner {
-        _baseURI = baseURI_;
     }
 
     function withdraw() public onlyOwner {
