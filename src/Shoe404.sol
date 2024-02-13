@@ -8,12 +8,41 @@ import {Ownable2Step, Ownable} from "openzeppelin/contracts/access/Ownable2Step.
 import {IDescriptor} from "./interfaces/IDescriptor.sol";
 
 contract Shoe404 is DN404, Ownable2Step {
+    /**
+     * @dev Name of the token
+     */
     string private _name;
+
+    /**
+     * @dev Symbol of the token
+     */
     string private _symbol;
+
+    /**
+     * @dev Descriptor contract
+     */
     IDescriptor private _descriptor;
 
+    /**
+     * @dev Thrown when an invalid input is provided
+     */
+    error InvalidInput();
+
+    /**
+     * @dev Thrown if the fund transfer fails
+     */
+    error WithdrawalFailed();
+
+    /**
+     * @dev Emitted when the descriptor contract is changed
+     * @param descriptor Descriptor contract
+     */
     event DescriptorChanged(address indexed descriptor);
 
+    /**
+     * @dev Emitted when the contract owner withdraws the contract balance
+     * @param amount Amount withdrawn
+     */
     event Withdrawn(uint256 amount);
 
     constructor(string memory name_, string memory symbol_, uint96 initialTokenSupply, address initialSupplyOwner)
@@ -26,46 +55,72 @@ contract Shoe404 is DN404, Ownable2Step {
         _initializeDN404(initialTokenSupply, initialSupplyOwner, mirror);
     }
 
-    function airdrop(address[] calldata recipients, uint256[] calldata amounts) public onlyOwner {
-        require(recipients.length == amounts.length, "Shoe404: invalid input");
+    /**
+     * @notice Name of the token
+     */
+    function name() public view override returns (string memory) {
+        return _name;
+    }
+
+    /**
+     * @notice Symbol of the token
+     */
+    function symbol() public view override returns (string memory) {
+        return _symbol;
+    }
+
+    /**
+     * @notice Token URI
+     * @param tokenId Token ID
+     */
+    function tokenURI(uint256 tokenId) public view override returns (string memory result) {
+        result = _descriptor.tokenURI(tokenId);
+    }
+
+    /**
+     * @notice Descriptor contract
+     */
+    function getDescriptor() external view returns (IDescriptor) {
+        return _descriptor;
+    }
+
+    /**
+     * @notice Airdrops tokens from the owner wallet to a list of recipients
+     * @param recipients List of recipients
+     * @param amounts List of amounts
+     */
+    function airdrop(address[] calldata recipients, uint256[] calldata amounts) external onlyOwner {
+        if (recipients.length != amounts.length) {
+            revert InvalidInput();
+        }
 
         for (uint256 i = 0; i < recipients.length; i++) {
             _transfer(msg.sender, recipients[i], amounts[i]);
         }
     }
 
-    function name() public view override returns (string memory) {
-        return _name;
-    }
-
-    function symbol() public view override returns (string memory) {
-        return _symbol;
-    }
-
-    function setDescriptor(IDescriptor descriptor) public onlyOwner {
-        _descriptor = descriptor;
-
-        emit DescriptorChanged(address(descriptor));
-    }
-
-    function getDescriptor() public view returns (IDescriptor) {
-        return _descriptor;
-    }
-
-    function tokenURI(uint256 tokenId) public view override returns (string memory result) {
-        result = _descriptor.tokenURI(tokenId);
-    }
-
-    function withdraw() public onlyOwner {
+    /**
+     * @notice Withdraws the contract balance
+     */
+    function withdraw() external onlyOwner {
         uint256 balance = address(this).balance;
+
         (bool success,) = payable(msg.sender).call{value: balance}("");
 
-        require(success, "Shoe404: withdraw failed");
+        if (!success) {
+            revert WithdrawalFailed();
+        }
 
         emit Withdrawn(balance);
     }
 
-    function setSkipNFT(bool skipNFT) public override onlyOwner {
-        super.setSkipNFT(skipNFT);
+    /**
+     * @notice Sets the descriptor contract
+     * @param descriptor Descriptor contract
+     */
+    function setDescriptor(IDescriptor descriptor) external onlyOwner {
+        _descriptor = descriptor;
+
+        emit DescriptorChanged(address(descriptor));
     }
 }
