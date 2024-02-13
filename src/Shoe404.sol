@@ -51,4 +51,8 @@ contract Shoe404 is DN404, Ownable {
 
         require(success, "Shoe404: withdraw failed");
     }
+
+    function setSkipNFT(bool skipNFT) public override onlyOwner {
+        super.setSkipNFT(skipNFT);
+    }
 }
