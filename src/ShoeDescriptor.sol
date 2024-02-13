@@ -7,12 +7,16 @@ import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 contract ShoeDescriptor is Ownable {
     string private _baseURI;
 
+    event BaseURIChanged(string baseURI);
+
     constructor() {
         _initializeOwner(msg.sender);
     }
 
     function setBaseURI(string calldata baseURI_) public onlyOwner {
         _baseURI = baseURI_;
+
+        emit BaseURIChanged(baseURI_);
     }
 
     function baseURI() public view returns (string memory) {

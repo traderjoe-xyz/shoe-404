@@ -12,6 +12,10 @@ contract Shoe404 is DN404, Ownable {
     string private _symbol;
     IDescriptor private _descriptor;
 
+    event DescriptorChanged(address indexed descriptor);
+
+    event Withdrawn(uint256 amount);
+
     constructor(string memory name_, string memory symbol_, uint96 initialTokenSupply, address initialSupplyOwner) {
         _initializeOwner(msg.sender);
 
@@ -32,6 +36,8 @@ contract Shoe404 is DN404, Ownable {
 
     function setDescriptor(IDescriptor descriptor) public onlyOwner {
         _descriptor = descriptor;
+
+        emit DescriptorChanged(address(descriptor));
     }
 
     function getDescriptor() public view returns (IDescriptor) {
@@ -47,9 +53,12 @@ contract Shoe404 is DN404, Ownable {
     }
 
     function withdraw() public onlyOwner {
-        (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
+        uint256 balance = address(this).balance;
+        (bool success,) = payable(msg.sender).call{value: balance}("");
 
         require(success, "Shoe404: withdraw failed");
+
+        emit Withdrawn(balance);
     }
 
     function setSkipNFT(bool skipNFT) public override onlyOwner {
