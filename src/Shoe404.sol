@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {DN404} from "lib/dn404/src/DN404.sol";
-import {DN404Mirror} from "lib/dn404/src/DN404Mirror.sol";
-import {Ownable2Step, Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol";
+import {DN404} from "dn404/src/DN404.sol";
+import {DN404Mirror} from "dn404/src/DN404Mirror.sol";
+import {Ownable2Step, Ownable} from "openzeppelin/contracts/access/Ownable2Step.sol";
 
 import {IDescriptor} from "./interfaces/IDescriptor.sol";
 

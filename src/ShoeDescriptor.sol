@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Ownable2Step, Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol";
-import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
+import {Ownable2Step, Ownable} from "openzeppelin/contracts/access/Ownable2Step.sol";
+import {Strings} from "openzeppelin/contracts/utils/Strings.sol";
 
 contract ShoeDescriptor is Ownable2Step {
     string private _baseURI;
