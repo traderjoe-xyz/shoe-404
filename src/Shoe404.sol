@@ -45,14 +45,14 @@ contract Shoe404 is DN404, Ownable2Step {
      */
     event Withdrawn(uint256 amount);
 
-    constructor(string memory name_, string memory symbol_, uint96 initialTokenSupply, address initialSupplyOwner)
-        Ownable(msg.sender)
+    constructor(string memory name_, string memory symbol_, uint96 initialTokenSupply, address initialOwner)
+        Ownable(initialOwner)
     {
         _name = name_;
         _symbol = symbol_;
 
         address mirror = address(new DN404Mirror(msg.sender));
-        _initializeDN404(initialTokenSupply, initialSupplyOwner, mirror);
+        _initializeDN404(initialTokenSupply, initialOwner, mirror);
     }
 
     /**
