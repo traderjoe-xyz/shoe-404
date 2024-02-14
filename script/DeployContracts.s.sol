@@ -18,7 +18,7 @@ contract ShoeContractDeployment is Script {
         vm.createSelectFork(rpc);
 
         vm.startBroadcast(deployer);
-        shoe = new Shoe404("Shoe404", "SHOE", 20_404e18, airdropManager);
+        shoe = new Shoe404("Shoe404", "SHOE", 19_404e18, airdropManager);
         descriptor = new ShoeDescriptor(airdropManager);
         mirror = Shoe404Mirror(payable(shoe.mirrorERC721()));
         vm.stopBroadcast();
