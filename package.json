@@ -1,0 +1,14 @@
+{
+  "name": "shoe-404",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "csv": "^6.3.6",
+    "viem": "^2.7.9"
+  }
+}
