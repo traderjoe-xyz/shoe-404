@@ -16,7 +16,7 @@ contract Shoe404Test is Test {
         shoe = new Shoe404("Shoe404", "SHOE", 10e18, address(this));
         shoeMirror = Shoe404Mirror(payable(shoe.mirrorERC721()));
 
-        descriptor = new ShoeDescriptor();
+        descriptor = new ShoeDescriptor(address(this));
         shoe.setDescriptor(IDescriptor(address(descriptor)));
     }
 
@@ -85,7 +85,7 @@ contract Shoe404Test is Test {
         descriptor.setBaseURI("");
         assertEq(shoe.tokenURI(1), "", "test_TokenURI::5");
 
-        descriptor = new ShoeDescriptor();
+        descriptor = new ShoeDescriptor(address(this));
         descriptor.setBaseURI(baseURI);
 
         shoe.setDescriptor(IDescriptor(address(descriptor)));

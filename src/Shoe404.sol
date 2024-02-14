@@ -40,7 +40,7 @@ contract Shoe404 is DN404, Ownable2Step {
         _name = name_;
         _symbol = symbol_;
 
-        address mirror = address(new Shoe404Mirror(msg.sender));
+        address mirror = address(new Shoe404Mirror(initialOwner));
         _initializeDN404(initialTokenSupply, initialOwner, mirror);
     }
 
