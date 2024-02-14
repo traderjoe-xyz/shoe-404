@@ -6,8 +6,8 @@ const FOLDER_PATH = "tasks/airdrop-files";
 const TOTAL_AIRDROP_FILE_NAME = "Airdrop Total.csv";
 const TRANSACTION_FILE_MATCH =
   /Transaction (\d+) - ([+-]?([0-9]*[.])?[0-9]+)\.csv/;
-const ADDRESSES_PER_NFT_TRANSACTION = 140;
-const ADDRESSES_PER_ERC20_TRANSACTION = 420;
+const ADDRESSES_PER_NFT_TRANSACTION = 100;
+const ADDRESSES_PER_ERC20_TRANSACTION = 340;
 
 interface AirdropLine {
   address: string;

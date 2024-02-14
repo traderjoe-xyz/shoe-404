@@ -8,7 +8,7 @@ import {
   parseEther,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { avalancheFuji } from "viem/chains";
+import { avalanche } from "viem/chains";
 
 interface AirdropTransaction {
   index: number;
@@ -17,15 +17,15 @@ interface AirdropTransaction {
   filePath: string;
 }
 
-const RPC_URL = process.env.FUJI_RPC;
-const CHAIN = avalancheFuji;
+const RPC_URL = "https://api.avax.network/ext/bc/C/rpc";
+const CHAIN = avalanche;
 const FOLDER_PATH = "tasks/airdrop-files";
 const TRANSACTION_FILE_MATCH =
   /Transaction (\d+) - ([+-]?([0-9]*[.])?[0-9]+)\.csv/;
 const AIRDROP_ABI = parseAbi([
   "function airdrop(address[] calldata wallets, uint256 amount) external",
 ]);
-const SHOE_ADDRESS = "0xcF3891177C07dcdF36c5359aad2Ed7583A8C8093";
+const SHOE_ADDRESS = "0x096D19B58Cab84A2f0Ff0E81c08291BFFaa62848";
 
 const account = privateKeyToAccount(
   process.env.AIRDROP_PRIVATE_KEY! as `0x${string}`
@@ -82,6 +82,7 @@ for (let i = 0; i < transactions.length; i++) {
       functionName: "airdrop",
       args: [wallets, parseEther(transaction.amount.toString())],
       gas: 15_000_000n,
+      gasPrice: 30000000000n,
     })
     .then((tx) =>
       publicClient.waitForTransactionReceipt({
