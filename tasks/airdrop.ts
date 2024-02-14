@@ -5,6 +5,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { avalancheFuji } from "viem/chains";
 
 interface AirdropTransaction {
+  index: number;
   wallets: `0x${string}`[];
   amount: number;
 }
@@ -17,6 +18,7 @@ const TRANSACTION_FILE_MATCH =
 const AIRDROP_ABI = parseAbi([
   "function airdrop(address[] calldata wallets, uint256 amount) external",
 ]);
+const SHOE_ADDRESS = "0xF5B2C85473d3e162ab3eA1658E03791C3e59ca2e";
 
 const account = privateKeyToAccount(
   process.env.AIRDROP_PRIVATE_KEY! as `0x${string}`
@@ -39,9 +41,11 @@ files.forEach((file) => {
     const filePath = path.join(FOLDER_PATH, file);
     const fileContent = fs.readFileSync(filePath, "utf-8");
 
+    const index = parseInt(match[1]);
     const amount = parseFloat(match[2]);
 
     transactions.push({
+      index,
       wallets: fileContent.split("\n") as `0x${string}`[],
       amount,
     });
@@ -55,20 +59,21 @@ for (let i = 0; i < transactions.length; i++) {
   const wallets = transaction.wallets;
 
   console.log(
-    `${i}: Airdropping ${transaction.amount} to ${wallets.length} wallets`
+    `${transaction.index}: Airdropping ${transaction.amount} to ${wallets.length} wallets`
   );
 
   await client
     .writeContract({
-      address: "0x538B1C712606D18241a3dF7629ca10164445b2c5",
+      address: SHOE_ADDRESS,
       abi: AIRDROP_ABI,
       functionName: "airdrop",
       args: [wallets, parseEther(transaction.amount.toString())],
     })
     .then((tx) => {
-      console.log(`    ✅ Transaction ${i} sent: ${tx}`);
+      console.log(`    ✅ Transaction ${transaction.index} sent: ${tx}`);
     })
+    .then(() => new Promise((resolve) => setTimeout(resolve, 1000)))
     .catch((error) => {
-      console.error(`    ❌ Transaction ${i} failed: ${error}`);
+      console.error(`    ❌ Transaction ${transaction.index} failed: ${error}`);
     });
 }

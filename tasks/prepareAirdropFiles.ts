@@ -6,6 +6,8 @@ const FOLDER_PATH = "tasks/airdrop-files";
 const TOTAL_AIRDROP_FILE_NAME = "Airdrop Total.csv";
 const TRANSACTION_FILE_MATCH =
   /Transaction (\d+) - ([+-]?([0-9]*[.])?[0-9]+)\.csv/;
+const ADDRESSES_PER_NFT_TRANSACTION = 140;
+const ADDRESSES_PER_ERC20_TRANSACTION = 420;
 
 interface AirdropLine {
   address: string;
@@ -44,13 +46,32 @@ function prepareAirdropFiles(lines: AirdropLine[]) {
   const differentAmounts = new Set(lines.map((line) => line.amount));
 
   differentAmounts.forEach((amount) => {
+    const addressesPerTransaction =
+      amount >= 1
+        ? ADDRESSES_PER_NFT_TRANSACTION
+        : ADDRESSES_PER_ERC20_TRANSACTION;
     const filteredLines = lines.filter((line) => line.amount === amount);
 
-    writeTransactionFile(
-      filteredLines.map((line) => line.address),
-      amount,
-      fileIndex++
+    const totalTransactions = Math.ceil(
+      filteredLines.length / addressesPerTransaction
     );
+
+    console.log(
+      `Preparing ${totalTransactions} transactions of ${amount} tokens`
+    );
+
+    for (let i = 0; i < totalTransactions; i++) {
+      const start = i * addressesPerTransaction;
+      const end = start + addressesPerTransaction;
+
+      const transactionLines = filteredLines.slice(start, end);
+
+      writeTransactionFile(
+        transactionLines.map((line) => line.address),
+        amount,
+        fileIndex++
+      );
+    }
   });
 }
 
@@ -94,7 +115,7 @@ function checkAirdroppedAmount() {
       const fileContent = fs.readFileSync(filePath, "utf-8");
 
       const lines = fileContent.split("\n").length;
-      const amount = parseInt(match[2]);
+      const amount = parseFloat(match[2]);
 
       totalSum += amount * lines;
     }
