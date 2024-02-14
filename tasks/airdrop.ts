@@ -1,6 +1,12 @@
 import fs from "fs";
 import path from "path";
-import { createWalletClient, http, parseAbi, parseEther } from "viem";
+import {
+  createPublicClient,
+  createWalletClient,
+  http,
+  parseAbi,
+  parseEther,
+} from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { avalancheFuji } from "viem/chains";
 
@@ -8,9 +14,10 @@ interface AirdropTransaction {
   index: number;
   wallets: `0x${string}`[];
   amount: number;
+  filePath: string;
 }
 
-const RPC_URL = "http://127.0.0.1:8545";
+const RPC_URL = process.env.FUJI_RPC;
 const CHAIN = avalancheFuji;
 const FOLDER_PATH = "tasks/airdrop-files";
 const TRANSACTION_FILE_MATCH =
@@ -18,7 +25,7 @@ const TRANSACTION_FILE_MATCH =
 const AIRDROP_ABI = parseAbi([
   "function airdrop(address[] calldata wallets, uint256 amount) external",
 ]);
-const SHOE_ADDRESS = "0xF5B2C85473d3e162ab3eA1658E03791C3e59ca2e";
+const SHOE_ADDRESS = "0xcF3891177C07dcdF36c5359aad2Ed7583A8C8093";
 
 const account = privateKeyToAccount(
   process.env.AIRDROP_PRIVATE_KEY! as `0x${string}`
@@ -26,6 +33,11 @@ const account = privateKeyToAccount(
 
 const client = createWalletClient({
   account,
+  transport: http(RPC_URL),
+  chain: CHAIN,
+});
+
+const publicClient = createPublicClient({
   transport: http(RPC_URL),
   chain: CHAIN,
 });
@@ -48,6 +60,7 @@ files.forEach((file) => {
       index,
       wallets: fileContent.split("\n") as `0x${string}`[],
       amount,
+      filePath,
     });
   }
 });
@@ -68,11 +81,28 @@ for (let i = 0; i < transactions.length; i++) {
       abi: AIRDROP_ABI,
       functionName: "airdrop",
       args: [wallets, parseEther(transaction.amount.toString())],
+      gas: 15_000_000n,
     })
-    .then((tx) => {
-      console.log(`    ✅ Transaction ${transaction.index} sent: ${tx}`);
+    .then((tx) =>
+      publicClient.waitForTransactionReceipt({
+        hash: tx,
+      })
+    )
+    .then((receipt) => {
+      if (receipt.status === "success") {
+        console.log(
+          `    ✅ Transaction ${transaction.index} sent: ${receipt.transactionHash}`
+        );
+        fs.renameSync(
+          transaction.filePath,
+          transaction.filePath.replace("airdrop-files", "airdropped-files")
+        );
+      } else {
+        console.error(
+          `    ❌ Transaction ${transaction.index} failed: ${receipt.transactionHash}`
+        );
+      }
     })
-    .then(() => new Promise((resolve) => setTimeout(resolve, 1000)))
     .catch((error) => {
       console.error(`    ❌ Transaction ${transaction.index} failed: ${error}`);
     });
