@@ -29,13 +29,11 @@ contract Shoe404Test is Test {
 
     function test_AirdropNFTs() public {
         address[] memory recipients = new address[](5);
-        uint256[] memory amounts = new uint256[](5);
         for (uint256 i = 0; i < 5; i++) {
             recipients[i] = _generateRandomRecipient();
-            amounts[i] = 1e18;
         }
 
-        shoe.airdrop(recipients, amounts);
+        shoe.airdrop(recipients, 1e18);
 
         for (uint256 i = 0; i < 5; i++) {
             assertEq(shoe.balanceOf(recipients[i]), 1e18, "test_AirdropNFTs::1");
@@ -47,13 +45,11 @@ contract Shoe404Test is Test {
 
     function test_AirdropTokens() public {
         address[] memory recipients = new address[](5);
-        uint256[] memory amounts = new uint256[](5);
         for (uint256 i = 0; i < 5; i++) {
             recipients[i] = _generateRandomRecipient();
-            amounts[i] = 0.5e18;
         }
 
-        shoe.airdrop(recipients, amounts);
+        shoe.airdrop(recipients, 0.5e18);
 
         for (uint256 i = 0; i < 5; i++) {
             assertEq(shoe.balanceOf(recipients[i]), 0.5e18, "test_AirdropTokens::1");

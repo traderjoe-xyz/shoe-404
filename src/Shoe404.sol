@@ -24,11 +24,6 @@ contract Shoe404 is DN404, Ownable2Step {
     IDescriptor private _descriptor;
 
     /**
-     * @dev Thrown when an invalid input is provided
-     */
-    error InvalidInput();
-
-    /**
      * @dev Thrown if the fund transfer fails
      */
     error WithdrawalFailed();
@@ -87,15 +82,11 @@ contract Shoe404 is DN404, Ownable2Step {
     /**
      * @notice Airdrops tokens from the owner wallet to a list of recipients
      * @param recipients List of recipients
-     * @param amounts List of amounts
+     * @param amount Amount airdropped
      */
-    function airdrop(address[] calldata recipients, uint256[] calldata amounts) external onlyOwner {
-        if (recipients.length != amounts.length) {
-            revert InvalidInput();
-        }
-
+    function airdrop(address[] calldata recipients, uint256 amount) external onlyOwner {
         for (uint256 i = 0; i < recipients.length; i++) {
-            _transfer(msg.sender, recipients[i], amounts[i]);
+            _transfer(msg.sender, recipients[i], amount);
         }
     }
 

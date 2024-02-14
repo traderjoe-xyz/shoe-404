@@ -11,15 +11,13 @@ contract ShoeAirdrop is Script {
         Shoe404 shoe = new Shoe404("Shoe404", "SHOE", 10_000e18, address(this));
 
         address[] memory recipients = new address[](1000);
-        uint256[] memory amounts = new uint256[](1000);
 
         for (uint256 i = 0; i < 1000; i++) {
             recipients[i] = address(uint160(uint256(keccak256(abi.encodePacked(i)))));
-            amounts[i] = 1;
         }
 
         uint256 gasBefore = gasleft();
-        shoe.airdrop(recipients, amounts);
+        shoe.airdrop(recipients, 1);
         uint256 gasUsed = gasBefore - gasleft();
 
         console.log("Gas used for transfers: %e", gasUsed * 25e9);
@@ -28,11 +26,10 @@ contract ShoeAirdrop is Script {
 
         for (uint256 i = 0; i < 1000; i++) {
             recipients[i] = address(uint160(uint256(keccak256(abi.encodePacked(type(uint256).max - i)))));
-            amounts[i] = 1e18;
         }
 
         gasBefore = gasleft();
-        shoe.airdrop(recipients, amounts);
+        shoe.airdrop(recipients, 1e18);
         gasUsed = gasBefore - gasleft();
 
         if (gasUsed > 14e6) {
