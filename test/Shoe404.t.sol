@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/src/Test.sol";
-import {Shoe404, DN404, DN404Mirror} from "src/Shoe404.sol";
+import {Shoe404, Shoe404Mirror, DN404} from "src/Shoe404.sol";
 import {ShoeDescriptor} from "src/ShoeDescriptor.sol";
 import {IDescriptor} from "src/interfaces/IDescriptor.sol";
 import {Strings} from "openzeppelin/contracts/utils/Strings.sol";
@@ -10,11 +10,11 @@ import {Strings} from "openzeppelin/contracts/utils/Strings.sol";
 contract Shoe404Test is Test {
     Shoe404 shoe;
     ShoeDescriptor descriptor;
-    DN404Mirror shoeMirror;
+    Shoe404Mirror shoeMirror;
 
     function setUp() public virtual {
         shoe = new Shoe404("Shoe404", "SHOE", 10e18, address(this));
-        shoeMirror = DN404Mirror(payable(shoe.mirrorERC721()));
+        shoeMirror = Shoe404Mirror(payable(shoe.mirrorERC721()));
 
         descriptor = new ShoeDescriptor();
         shoe.setDescriptor(IDescriptor(address(descriptor)));

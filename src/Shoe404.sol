@@ -2,9 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {DN404} from "dn404/src/DN404.sol";
-import {DN404Mirror} from "dn404/src/DN404Mirror.sol";
 import {Ownable2Step, Ownable} from "openzeppelin/contracts/access/Ownable2Step.sol";
 
+import {Shoe404Mirror} from "./Shoe404Mirror.sol";
 import {IDescriptor} from "./interfaces/IDescriptor.sol";
 
 contract Shoe404 is DN404, Ownable2Step {
@@ -40,7 +40,7 @@ contract Shoe404 is DN404, Ownable2Step {
         _name = name_;
         _symbol = symbol_;
 
-        address mirror = address(new DN404Mirror(msg.sender));
+        address mirror = address(new Shoe404Mirror(msg.sender));
         _initializeDN404(initialTokenSupply, initialOwner, mirror);
     }
 
