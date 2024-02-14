@@ -93,16 +93,6 @@ contract Shoe404Test is Test {
         assertEq(shoe.tokenURI(1), string(abi.encodePacked(baseURI, "3")), "test_TokenURI::6");
     }
 
-    function test_Withdraw() public {
-        payable(address(shoe)).transfer(1e18);
-
-        assertEq(address(shoe).balance, 1e18, "test_Withdraw::1");
-
-        shoe.withdraw();
-
-        assertEq(address(shoe).balance, 0, "test_Withdraw::2");
-    }
-
     receive() external payable {}
 
     uint256 nonce = 0;

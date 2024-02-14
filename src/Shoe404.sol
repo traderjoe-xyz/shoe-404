@@ -24,21 +24,15 @@ contract Shoe404 is DN404, Ownable2Step {
     IDescriptor private _descriptor;
 
     /**
-     * @dev Thrown if the fund transfer fails
+     * @dev Thrown if someone tries to send native token to this contract
      */
-    error WithdrawalFailed();
+    error NoDirectTransferAllowed();
 
     /**
      * @dev Emitted when the descriptor contract is changed
      * @param descriptor Descriptor contract
      */
     event DescriptorChanged(address indexed descriptor);
-
-    /**
-     * @dev Emitted when the contract owner withdraws the contract balance
-     * @param amount Amount withdrawn
-     */
-    event Withdrawn(uint256 amount);
 
     constructor(string memory name_, string memory symbol_, uint96 initialTokenSupply, address initialOwner)
         Ownable(initialOwner)
@@ -91,21 +85,6 @@ contract Shoe404 is DN404, Ownable2Step {
     }
 
     /**
-     * @notice Withdraws the contract balance
-     */
-    function withdraw() external onlyOwner {
-        uint256 balance = address(this).balance;
-
-        (bool success,) = payable(msg.sender).call{value: balance}("");
-
-        if (!success) {
-            revert WithdrawalFailed();
-        }
-
-        emit Withdrawn(balance);
-    }
-
-    /**
      * @notice Sets the descriptor contract
      * @param descriptor Descriptor contract
      */
@@ -113,5 +92,9 @@ contract Shoe404 is DN404, Ownable2Step {
         _descriptor = descriptor;
 
         emit DescriptorChanged(address(descriptor));
+    }
+
+    receive() external payable override {
+        revert NoDirectTransferAllowed();
     }
 }
