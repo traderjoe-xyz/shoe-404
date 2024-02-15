@@ -21,7 +21,7 @@ contract ShoeDescriptor is Ownable2Step {
      */
     event BaseURIChanged(string baseURI);
 
-    constructor() Ownable(msg.sender) {}
+    constructor(address initialOwner) Ownable(initialOwner) {}
 
     /**
      * @notice Base URI for the token

@@ -3,4 +3,6 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+[etherscan]
+fuji = { key = "${SNOWTRACE_API_KEY}", chain = 43113 }
+avalanche = { key = "${SNOWTRACE_API_KEY}", chain = 43114 }
