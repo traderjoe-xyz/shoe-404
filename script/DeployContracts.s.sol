@@ -11,7 +11,7 @@ contract ShoeContractDeployment is Script {
     uint96 constant ROYALTY_BPS = 50; // 0,5%
 
     function run() public returns (Shoe404 shoe, Shoe404Mirror mirror, ShoeDescriptor descriptor) {
-        string memory rpc = vm.envString("RPC_URL");
+        string memory rpc = vm.envString("AVALANCHE_RPC");
         address deployer = vm.rememberKey(vm.envUint("DEPLOYER_PRIVATE_KEY"));
         address airdropManager = vm.rememberKey(vm.envUint("AIRDROP_PRIVATE_KEY"));
 
